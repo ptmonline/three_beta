@@ -8,49 +8,57 @@ var color = d3.scaleOrdinal(d3.schemeCategory10);
 var pack = d3.pack()
     .size([width, width])
     .padding(1.5);
+var letters = [];
 
-d3.csv("flare.csv", function(d) {
-  d.value = +d.value;
-  if (d.value) return d;
-}, function(error, classes) {
-  if (error) throw error;
-
-  var root = d3.hierarchy({children: classes})
-      .sum(function(d) { return d.value; })
-      .each(function(d) {
-        if (id = d.data.id) {
-          var id, i = id.lastIndexOf(".");
-          d.id = id;
-          d.package = id.slice(0, i);
-          d.class = id.slice(i + 1);
-        }
+// d3.csv("0_HORTS_URBANS.csv", function(d) {
+//   var thex = parseFloat(d.ED50_COORD_X) / 10000;
+//   var they = parseFloat(d.ED50_COORD_Y) / 100000;
+//   console.log(d.EQUIPAMENT);
+//   console.log(parseFloat(d.ED50_COORD_Y) / 100000);
+//   if (d) return d;
+// }, function(error, classes) {
+//   if (error) throw error;
+//
+//   var root = d3.hierarchy({children: classes})
+//       .sum(function(d) { return d; })
+//       .each(function(d) {
+//         var x = parseFloat(d.ED50_COORD_X) / 10000;
+//         var y = parseFloat(d.ED50_COORD_Y) / 100000;
+//       });
+      d3.csv("0_HORTS_URBANS.csv", function(data) {
+          data.forEach(function(d) {
+            title = d.EQUIPAMENTS;
       });
-
   var node = svg.selectAll(".node")
-    .data(pack(root).leaves())
+    .data(data)
     .enter().append("g")
       .attr("class", "node")
-      .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
+      .attr("transform", function(d) { return "translate(" +Math.floor((Math.random() * 1000) + 1) + "," + Math.floor((Math.random() * 700) + 1) + ")"; });
 
   node.append("circle")
-      .attr("id", function(d) { return d.id; })
-      .attr("r", function(d) { return d.r; })
-      .style("fill", function(d) { return color(d.package); });
+      .attr("class", function(d) { return d.CODI_CAPA; })
+      .attr("r", function(d) {  return Math.floor((Math.random() * 50) + 1);})
+      .attr("stroke","black")
+      .style("fill", "000000")
+      .style("opacity", function(d){ return Math.random();})
 
-  node.append("clipPath")
-      .attr("id", function(d) { return "clip-" + d.id; })
-    .append("use")
-      .attr("xlink:href", function(d) { return "#" + d.id; });
 
   node.append("text")
-      .attr("clip-path", function(d) { return "url(#clip-" + d.id + ")"; })
-    .selectAll("tspan")
-    .data(function(d) { return d.class.split(/(?=[A-Z][^A-Z])/g); })
-    .enter().append("tspan")
-      .attr("x", 0)
-      .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
-      .text(function(d) { return d; });
+    .attr("dx", function(d){return 20})
+    .attr("font-family", "sans-serif")
+    .attr("font-size", "20px")
+    .attr("fill", "black")
+    .text(function(d) { return d.EQUIPAMENT})
 
-  node.append("title")
-      .text(function(d) { return d.id + "\n" + format(d.value); });
+    function redraw() {
+      // update the circle
+      d3.selectAll("circle")
+      .transition()
+        .duration(Math.floor((Math.random() * 1000) + 1))
+        .attr("r", function(d) {  return Math.floor((Math.random() * 50) + 1);})
+    }
+
+    setInterval(function(){
+      redraw();
+    }, 500)
 });
