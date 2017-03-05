@@ -3,7 +3,7 @@ var svg = d3.select("svg"),
 
 var format = d3.format(",d");
 
-var color = d3.scaleOrdinal(d3.schemeCategory10);
+
 
 var pack = d3.pack()
     .size([width, width])
